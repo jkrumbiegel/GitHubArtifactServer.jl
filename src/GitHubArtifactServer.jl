@@ -26,7 +26,7 @@ function simple_progress(total::Int, bytes::Int)
     print("\rDownloading: $(round(percent, digits=2))%")
 end
 
-function _serve(artifact)
+function _serve(artifact; prefix)
     mktempdir() do dir
         zipfile = joinpath(dir, "artifact.zip")
         println()
@@ -38,18 +38,19 @@ function _serve(artifact)
         )
         println()
 
-        unzipdir = joinpath(dir, "artifact")
-        mkdir(unzipdir)
+        artifactdir = joinpath(dir, "artifact")
+        unzipdir = joinpath(artifactdir, prefix)
+        mkpath(unzipdir)
 
         # Run the 7z command to extract the contents of the zip file
         run(`$(p7zip_jll.p7zip()) x -bd $zipfile -o$unzipdir`)
 
-        LiveServer.serve(; dir = unzipdir, launch_browser = true)
+        LiveServer.serve(; dir = artifactdir, launch_browser = true)
     end
 end
 
 """
-    serve_artifact(url)
+    serve_artifact(url; prefix = "")
 
 Takes a `url` of the form `"https://github.com/SomeUser/SomeRepo.jl/actions/runs/12345678/..."`
 (the trailing content does not matter, important is the `runs/12345678` part), queries workflow
@@ -57,8 +58,11 @@ artifacts for that run and downloads the one you pick. It then unzips the conten
 directory and serves it via `LiveServer.jl`. It is intended for looking at artifacts such as doc builds.
 
 You can set `ENV["GITHUB_TOKEN"]` for authorization. Otherwise, `gh auth token` is tried as a fallback.
+
+The `prefix` can be used if what you view only works with some prefix, like a baked in
+`previews/PR4567`.
 """
-function serve_artifact(url)
+function serve_artifact(url; prefix = "")
     pattern = r"github\.com/([^/]+/[^/]+)/actions/runs/(\d+)/?"
 
     match = Base.match(pattern, url)
@@ -70,12 +74,12 @@ function serve_artifact(url)
         if isempty(_artifacts)
 
         elseif length(_artifacts) == 1
-            _serve(only(_artifacts))
+            _serve(only(_artifacts); prefix)
         else
             _artifact = pick(_artifacts) do artifact
                 artifact["name"]
             end
-            _serve(_artifact)
+            _serve(_artifact; prefix)
         end
     else
         println("Could not extract repo and run id from url \"$url\"")
