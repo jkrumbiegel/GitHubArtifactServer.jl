@@ -3,6 +3,14 @@ uuid = "f661c07d-36ac-4a03-b56d-f11c83761ef5"
 authors = ["Julius Krumbiegel <julius.krumbiegel@gmail.com> and contributors"]
 version = "1.0.0-DEV"
 
+[deps]
+Downloads = "f43a241f-c20a-4ad4-852c-f6b1247861c6"
+HTTP = "cd3eb016-35fb-5094-929b-558a96fad6f3"
+JSON = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
+LiveServer = "16fef848-5104-11e9-1b77-fb7a48bbb589"
+REPL = "3fa0cd96-eef1-5676-8a61-b3b8758bbffb"
+p7zip_jll = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
+
 [compat]
 julia = "1.10"
 
