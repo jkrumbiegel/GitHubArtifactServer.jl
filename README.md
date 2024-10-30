@@ -12,6 +12,7 @@ Just go to the page of a GitHub workflow that contains the workflow you're inter
 using GitHubArtifactServer
 
 serve_artifact("https://github.com/SomeUser/SomeRepo.jl/actions/runs/12345678")
+serve_artifact("https://github.com/SomeUser/SomeRepo.jl/pull/1234") # last commit of that PR
 ```
 
 If there are multiple artifacts, you will be asked which one you want.
